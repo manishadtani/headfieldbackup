@@ -52,9 +52,11 @@ app.post('/api/submit-form', (req, res) => {
 
     // === SUCCESSFUL UPLOAD -> NOW SAVE TO DATABASE ===
     try {
-      // Ye saari fields aapke screenshot ke hisaab se li gayi hain
-      const { from_name, from_email, phone, source, 'linked-in': linked_in, cv_filename } = req.body; 
+      // Ye saari fields aapke screenshot ke hisaab se li gayi hain. Hum 'linked-in' aur 'linked_in' dono check kar rahe hain taaki null na aaye.
+      const { from_name, from_email, phone, source, 'linked-in': linkedInDash, linked_in, cv_filename } = req.body; 
       
+      const finalLinkedIn = linkedInDash || linked_in || null;
+
       // File ka data (binary) aur uska asali naam
       const fileData = req.file ? req.file.buffer : null; 
       const actualFilename = req.file ? req.file.originalname : cv_filename;
@@ -65,7 +67,7 @@ app.post('/api/submit-form', (req, res) => {
         RETURNING id, from_name;
       `;
       
-      const values = [from_name, from_email, phone, source, linked_in, actualFilename, fileData];
+      const values = [from_name, from_email, phone, source, finalLinkedIn, actualFilename, fileData];
 
       const result = await pool.query(query, values);
       
