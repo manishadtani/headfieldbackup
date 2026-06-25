@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Form Upload</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 500px; }
+    form { display: flex; flex-direction: column; gap: 10px; }
+    input, select, button { padding: 10px; font-size: 16px; }
+    button { background-color: #28a745; color: white; cursor: pointer; border: none; }
+  </style>
+</head>
+<body>
+
+  <h2>Submit your CV</h2>
+  <form id="myForm">
+    <input type="text" name="from_name" placeholder="Name" required>
+    <input type="email" name="from_email" placeholder="Email" required>
+    <input type="text" name="phone" placeholder="Phone">
+    
+    <select name="source">
+      <option value="LinkedIn">LinkedIn</option>
+      <option value="Indeed">Indeed</option>
+      <option value="Referral">Referral</option>
+    </select>
+    
+    <input type="url" name="linked_in" placeholder="LinkedIn Profile URL">
+    <input type="text" name="cv_filename" placeholder="Name of CV (e.g. MyResume)" required>
+    
+    <label>Upload CV (Max 2MB):</label>
+    <input type="file" name="my_file" required>
+    
+    <button type="submit">Submit Form</button>
+  </form>
+
+  <script>
+    document.getElementById('myForm').addEventListener('submit', async function(e) {
+      e.preventDefault(); 
+      const formElement = document.getElementById('myForm');
+      const formData = new FormData(formElement);
+
+      try {
+        const response = await fetch('http://localhost:3000/api/submit-form', {
+          method: 'POST',
+          body: formData 
+        });
+
+        const result = await response.json();
+        
+        if(result.success) {
+          alert("✅ Success: " + result.message);
+          formElement.reset();
+        } else {
+          alert("❌ Error: " + result.message);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Something went wrong! Is your node server running?");
+      }
+    });
+  </script>
+</body>
+</html>
